@@ -69,3 +69,27 @@ aprobado = 10
 print(f'data: {aprobado}')
 print('data: {}'.format(aprobado))
 print('data: {2} {1} {0}'.format(aprobado, 20, 30))
+
+
+# While
+tope = 100
+actual = 0
+while actual < tope:
+    print(actual)
+    actual += 1
+
+# para cerrar el while de una manera abrupta
+while True:
+    print('hola')
+    break  # termina la iteracion de manera abrupta, esto tambien es valido para los for
+
+for numero in range(5):
+    if numero == 3:
+        continue  # detiene la iteracion actual y no permite que se ejecute el codigo restante PERO no acaba la iteracion como el break
+    print(numero)
+
+
+def mostrar_alumnos():
+    # si de momento no tenemos una logica planeada para nuestra funcion, if, else, for, while, etc o cualquier bloque de codigo podemos usar
+    pass
+    # {}
