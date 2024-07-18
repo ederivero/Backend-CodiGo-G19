@@ -1,0 +1,8 @@
+Cada vez que usamos un comando que empiece con el "\" este comando solamente funciona para psql
+No es necesario colocar ; al final de cada comando de PSQL , es opcional
+
+psql -U USUARIO_DB -h HOST -p PORT NOMBRE_BD > forma para conectarnos a nuestro servidor de base de datos
+\l                  > mostrar todas las bases de datos existentes en el servidor actual
+\c                  > cambiar a otra base de datos
+\dt                 > lista todas las tablas de nuestra base de datos
+\d NOMBRE_TABLA     > la descripcion de la tabla con sus columnas, tipos de datos y constraints
