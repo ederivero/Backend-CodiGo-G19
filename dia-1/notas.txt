@@ -6,3 +6,4 @@ psql -U USUARIO_DB -h HOST -p PORT NOMBRE_BD > forma para conectarnos a nuestro 
 \c                  > cambiar a otra base de datos
 \dt                 > lista todas las tablas de nuestra base de datos
 \d NOMBRE_TABLA     > la descripcion de la tabla con sus columnas, tipos de datos y constraints
+\x                  > modificar la visualizacion de los datos y ahora en vez de mostrar como una tabla mostrara como unas tarjetas
