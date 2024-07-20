@@ -7,3 +7,24 @@ psql -U USUARIO_DB -h HOST -p PORT NOMBRE_BD > forma para conectarnos a nuestro 
 \dt                 > lista todas las tablas de nuestra base de datos
 \d NOMBRE_TABLA     > la descripcion de la tabla con sus columnas, tipos de datos y constraints
 \x                  > modificar la visualizacion de los datos y ahora en vez de mostrar como una tabla mostrara como unas tarjetas
+
+
+
+PARA HACER UNA COPIA DE SEGURIDAD ES DE LA SIGUIENTE MANERA:
+pg_dump -U USUARIO -h HOST -p PUERTO NOMBRE_ARCHIVO[.sql | .backup] NOMBRE_BD
+
+PARA HACER LA RESTAURACION 
+Primero debemos tener la base de datos YA CREADA y que no exista las tablas que vamos a restaurar sino lanzara errores
+
+USANDO ARCHIVOS .sql
+    psql -U USUARIO -h HOST -p PUERTO -d NOMBRE_BD -f ARCHIVO.sql
+
+    PARA SISTEMAS OPERATIVOS LINUX
+    cat ARCHIVO.sql | psql -U USUARIO -h HOST -p PUERTO -d NOMBRE_BD
+
+USANDO ARCHIVOS .backup (sin extension)
+Al momento de hacer la copia de seguridad tenemos que indicar si usamos extension colocar "-F c" que servira para indicar el formato customize (personalizable), caso contrario si no ponemos extension no es necesario poner "-F c"
+
+
+pg_restore -U USUARIO -h HOST -p PUERTO -d NOMBRE_BD -v ARCHIVO[.backup]
+
