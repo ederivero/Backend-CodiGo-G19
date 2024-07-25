@@ -1,0 +1,9 @@
+# Repositorio ignora todos los archivos / carpetas declarados en este archivo
+# entorno_semana03
+
+# Patrones
+# * sirve para indicar que lo restante no importa
+entorno*
+
+# No me importa el nombre del archivo pero que la extension .css no se haga commits
+*.java

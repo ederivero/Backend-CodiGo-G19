@@ -1,0 +1,10 @@
+pip list                        > lista todas las librerias de python
+pip freeze                      > lista todas las librerias instaladas manualmente de python
+pip install NOMBRE_LIBRERIA     > instala la libreria y si no la encuentra lanza un error
+python -m venv NOMBRE_ENTORNO   > crea un entorno en la ubicacion especificada
+source ENTORNO/scripts/activate > levanta el entorno para ser usado usando terminales GIT BASH
+source ENTORNO/bin/activate     > levanta el entorno en S.O. Linux
+ENTORNO/scripts/activate        > levanta el entorno usando terminales POWERSHELL | CMD
+deactivate                      > desactiva el entorno
+pip freeze > requirements.txt   > lista las librerias y lo guarda en el archivo requirements.txt
+pip install -r requirements.txt > buscar el archivo especificado e instalara todas las librerias declaradas dentro del archivo
