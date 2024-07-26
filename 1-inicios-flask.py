@@ -56,6 +56,100 @@ def devolver_usuarios():
         'content': resultado
     }
 
+@app.route('/devolver-usuario/<int:id>', methods= ['GET'])
+def devolverUsuario(id):
+    print(id)
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM usuarios WHERE id = %s", (id,))
+    usuario = cursor.fetchone()
+    print(usuario)
+    cursor.close()
+
+    if usuario:
+        return {
+            'id': usuario[0],
+            'nombre': usuario[1],
+            'apellido': usuario[2],
+            'correo': usuario[3]
+        }
+    else:
+        return {
+            'message': 'El usuario no existe'
+        }, 404 # Not Found
+    
+
+@app.route('/actualizar-usuario/<int:id>', methods =['PUT'])
+def actualizarUsuario(id):
+    # buscar el usuario, solamente buscar su id para no obtener informacion de mas, si el usuario no existe, devolver un estado 404
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id FROM usuarios WHERE id = %s", (id,))
+    usuario = cursor.fetchone()
+    
+    # si el usuario existe entonces obtener el body (request.get_json())
+    if usuario:
+        data = request.get_json() # {nombre: '...'}
+        # hacemos la actualizacion del usuario en la base de datos
+        cursor.execute("UPDATE usuarios SET nombre = %s, apellido = %s, correo = %s WHERE id = %s",
+                       (data['nombre'], data['apellido'], data['correo'], id))
+        conexion.commit() # guarda los cambios de manera permanente
+        cursor.close()
+        return {
+            'message': 'usuario actualizado exitosamente'
+        }
+    else:
+        cursor.close()
+        return {
+            'message': 'El usuario no existe'
+        }, 404
+
+@app.route('/eliminar-usuario/<string:id>', methods = ['DELETE'])
+def eliminarUsuario(id):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id FROM usuarios WHERE id = %s", (id,))
+    usuario = cursor.fetchone()
+
+    if usuario:
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (id,))
+        conexion.commit()
+        cursor.close()
+
+        return {
+            'message': 'usuario eliminado exitosamente'
+        }
+    else:
+        cursor.close()
+        return {
+            'message': 'El usuario no existe'
+        }, 404
+
+
+# Leccion de SQL INJECTION
+@app.route('/devolver-productos', methods=['GET'])
+def devolverProductos():
+    query_params = request.args # query params
+    # buscar en un diccionario sobre una llave que TAL VEZ exista o no es usando el metodo get
+    # el metodo get solo se usa para cuestiones de busqueda mas no de asignacion, es decir query_params.get('nombre') = 10
+    print(query_params.get('nombre'))
+    nombre = query_params.get('nombre','')
+
+    cursor = conexion.cursor()
+    texto = "Drone'; DROP TABLE productos"
+    cursor.execute("SELECT * FROM productos WHERE nombre = 'Drone'; DROP TABLE productos -- AND disponible = TRUE")
+    productos = cursor.fetchmany()
+    print(productos)
+    
+    resultado = []
+    for producto in productos:
+        resultado.append({
+            "id": producto[0],
+            "nombre": producto[1]
+        })
+
+    return {
+        'content': resultado
+    }
+
+
 if __name__ == '__main__':
     # estamos en el archivo principal
 
