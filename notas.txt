@@ -8,3 +8,12 @@ ENTORNO/scripts/activate        > levanta el entorno usando terminales POWERSHEL
 deactivate                      > desactiva el entorno
 pip freeze > requirements.txt   > lista las librerias y lo guarda en el archivo requirements.txt
 pip install -r requirements.txt > buscar el archivo especificado e instalara todas las librerias declaradas dentro del archivo
+
+
+
+PARA USO DE MIGRACIONES
+--app NOMBRE_ARCHIVO:VARIABLE_FLASK             > OPCIONALMENTE se puede agregar la opcion para indicar donde se ubica el archivo de flask
+flask db init                                   > inicializa nuestro proyecto con las migraciones
+
+flask db migrate -m "Agregue tabla alumnos"     > crea una nueva migracion basandose en los cambios que hay en la bd
+flask db upgrade                                > ejecuta las migraciones faltantes en la base de datos
