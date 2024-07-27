@@ -4,6 +4,8 @@ from sqlalchemy import Column, types
 from flask_migrate import Migrate
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow.exceptions import ValidationError
+from sqlalchemy.sql.expression import and_
+
 # ORM una de las ventajas es que se usa para diferentes motores de base de datos por lo que si usamos uno en particular no podremos cambiar facilmente a otro motor de base de datos (postgre > mysql)
 # from sqlalchemy.dialects.postgresql import 
 
@@ -120,6 +122,112 @@ def devolverAlumno(id):
     return {
         'content': resultado
     }
+
+@app.route('/actualizar-alumno/<int:id>', methods =['PUT'])
+def actualizarAlumno(id):
+    # SELECT id FROM alumnos WHERE id = ....
+    alumnoEncontrado = conexion.session.query(AlumnoModel).with_entities(AlumnoModel.id).where(AlumnoModel.id == id).first()
+    print(alumnoEncontrado)
+    if not alumnoEncontrado:
+        return {
+            'message': 'El alumno no existe'
+        }, 404
+    
+    serializador = AlumnoSerializer()
+    try:
+        dataValidada = serializador.load(request.get_json())
+        # en el metodo update se tiene que pasar el diccionario con los valores a actualizar
+        # UPDATE alumnos SET .... WHERE id = ...;
+        conexion.session.query(AlumnoModel).where(AlumnoModel.id == id).update(dataValidada)
+        conexion.session.commit()
+
+        # Ahora procedemos a buscar el alumno actualizado para devolverlo
+        resultado = conexion.session.query(AlumnoModel).where(AlumnoModel.id == id).first()
+        alumnoActualizado = serializador.dump(resultado)
+        
+        return {
+            'message': 'Alumno actualizado exitosamente',
+            'content': alumnoActualizado
+
+        }
+    except ValidationError as error:
+        return {
+            'message': 'Error al actualizar el alumno',
+            'content': error.args
+        },400 # Mala solicitud | Bad Request
+    
+@app.route('/eliminar-alumno/<int:id>', methods = ['DELETE'])
+def eliminarAlumno(id):
+    alumnoEncontrado = conexion.session.query(AlumnoModel).with_entities(AlumnoModel.id).where(AlumnoModel.id == id).first()
+    
+    if not alumnoEncontrado:
+        return {
+            'message': 'El alumno no existe'
+        }, 404
+    
+    conexion.session.query(AlumnoModel).where(AlumnoModel.id == id).delete()
+    conexion.session.commit()
+
+    return {
+        'message': 'Alumno eliminado exitosamente'
+    }
+
+@app.route('/buscar-alumnos', methods = ['GET'])
+def buscarAlumnos():
+    # query params
+    queryParams = request.args
+    nombre = queryParams.get('nombre')
+    correo = queryParams.get('correo')
+
+    condiciones = []
+    if nombre:
+        # nombre = 'Mariana'
+        # condiciones.append(AlumnoModel.nombre == nombre) # Busqueda exacta
+
+        # nombre like '%Mar%'
+        # condiciones.append(AlumnoModel.nombre.like(f"%{nombre}%")) # Busqueda por similitud
+
+        # si queremos que la busqueda no respete mayusculas ni minusculas
+        # i > insensitive
+        condiciones.append(AlumnoModel.nombre.ilike(f"%{nombre}%"))
+
+    if correo:
+        # condiciones.append(AlumnoModel.correo == correo)
+        condiciones.append(AlumnoModel.correo.ilike(f"%{correo}%"))
+
+    # https://docs.sqlalchemy.org/en/20/core/sqlelement.html#sqlalchemy.sql.expression.and_
+    resultado = conexion.session.query(AlumnoModel).where(and_(*condiciones)).all()
+
+    # resultado = conexion.session.query(AlumnoModel).where(AlumnoModel.nombre == nombre, AlumnoModel.correo == correo).all()
+    print(resultado)
+    
+    serializador = AlumnoSerializer()
+    alumnos = serializador.dump(resultado,many=True)
+
+    return {
+        'content': alumnos
+    }
+
+
+# TODO EN ORM
+# Crear una tabla llamada productos cuya clase sea ProductoModel
+# id AI pk not null
+# nombre texto not null
+# precio float 
+# disponible boolean
+
+# flask --app 2-flask-con-orm:app db migrate -m "agregue tabla productos"
+# flask --app 2-flask-con-orm:app db upgrade
+
+# ingresar los siguientes valores
+
+# INSERT INTO productos (nombre, precio, disponible) VALUES ('Galleta de Ositos', 7.5, true), ('Whiskas', 9.50, true), ('Organizador', 25.30, true), ('Ventilador de mano', 9.9, false), ('Mouse inalambrico', 14.5, true);
+
+# hacer una busqueda de los productos por su nombre (usando el ilike)
+
+# hacer otra busqueda de los productos en un rango de precio (precio minimo y precio maximo)
+
+# en ambas busquedas solamente buscar los productos que esten disponibles
 
 
 if __name__ == '__main__':

@@ -19,3 +19,15 @@ print(resultado)
 
 resultado = sumar(**datos)
 print(resultado)
+
+
+def nombres(*args):
+    print(args)
+
+nombre = 'juan'
+apellido = 'bustinza'
+
+datos = []
+datos.append(nombre =='eduardo')
+datos.append(apellido == 'de rivero')
+nombres(*datos)
