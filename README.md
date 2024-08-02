@@ -4,10 +4,10 @@ Bienvenido a mi repositorio, aqui podras encontrar toda la informacion relaciona
 
 Toda la informacion estara distribuida entre ramas en la cual cada semana sera 1 rama y tendremos el siguiente indice:
 
-1. [Semana 01](https://www.google.com)
-2. [Semana 02]()
-3. [Semana 03]()
-4. [Semana 04]()
+1. [Semana 01](https://github.com/ederivero/Backend-CodiGo-G19/tree/semana01)
+2. [Semana 02](https://github.com/ederivero/Backend-CodiGo-G19/tree/semana02)
+3. [Semana 03](https://github.com/ederivero/Backend-CodiGo-G19/tree/semana03)
+4. [Semana 04](https://github.com/ederivero/Backend-CodiGo-G19/tree/semana04)
 5. [Semana 05]()
 6. [Semana 06]()
 7. [Semana 07]()
