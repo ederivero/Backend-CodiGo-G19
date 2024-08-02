@@ -1,1 +1,4 @@
 entorno_*
+__pycache__
+*.pyc
+.env
