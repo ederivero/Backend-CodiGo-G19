@@ -215,20 +215,58 @@ def buscarAlumnos():
 # nombre texto not null
 # precio float 
 # disponible boolean
+class ProductoModel(conexion.Model):
+    id = Column(type_=types.Integer, autoincrement=True, primary_key=True, nullable=False)
+    nombre = Column(type_=types.Text, nullable=False)
+    precio = Column(type_=types.Float)
+    disponible = Column(type_=types.Boolean)
+
+    __tablename__='productos'
+
 
 # flask --app 2-flask-con-orm:app db migrate -m "agregue tabla productos"
 # flask --app 2-flask-con-orm:app db upgrade
 
 # ingresar los siguientes valores
 
-# INSERT INTO productos (nombre, precio, disponible) VALUES ('Galleta de Ositos', 7.5, true), ('Whiskas', 9.50, true), ('Organizador', 25.30, true), ('Ventilador de mano', 9.9, false), ('Mouse inalambrico', 14.5, true);
+# INSERT INTO productos (nombre, precio, disponible) VALUES 
+# ('Galleta de Ositos', 7.5, true), 
+# ('Whiskas', 9.50, true), 
+# ('Organizador', 25.30, true), 
+# ('Ventilador de mano', 9.9, false), 
+# ('Mouse inalambrico', 14.5, true);
+
+class ProductoSerializer(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ProductoModel
 
 # hacer una busqueda de los productos por su nombre (usando el ilike)
+@app.route('/buscar-producto-por-nombre/<string:nombre>', methods=['GET'])
+def buscarProductoPorNombre(nombre):
+    productos = conexion.session.query(ProductoModel).where(ProductoModel.nombre.ilike(f"%{nombre}%"), ProductoModel.disponible == True).all()
+    serializador = ProductoSerializer()
+    
+    resultado = serializador.dump(productos,many=True)
+    
+    return {
+        'content': resultado
+    }
+
 
 # hacer otra busqueda de los productos en un rango de precio (precio minimo y precio maximo)
+@app.route('/buscar-producto-por-precios/<int:minimo>/<int:maximo>', methods = ['GET'])
+def buscarProductoPorPrecios(minimo, maximo):
+    # Quiero los productos que cuesten entre 5 y 15 soles
+    productos = conexion.session.query(ProductoModel).where(ProductoModel.precio >= minimo, ProductoModel.precio <= maximo , ProductoModel.disponible == True).all()
+    serializador = ProductoSerializer()
+    
+    resultado = serializador.dump(productos,many=True)
+    
+    return {
+        'content': resultado
+    }
 
 # en ambas busquedas solamente buscar los productos que esten disponibles
-
 
 if __name__ == '__main__':
     app.run(debug=True)
