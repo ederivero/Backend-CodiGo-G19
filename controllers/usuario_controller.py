@@ -3,8 +3,9 @@ from instancias import conexion
 from flask_restful import Resource, request
 from serializers import RegistroSerializer, LoginSerializer
 from marshmallow.exceptions import ValidationError
-from bcrypt import gensalt, hashpw
+from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 class RegistroController(Resource):
     def post(self):
@@ -53,7 +54,6 @@ class RegistroController(Resource):
                 'content': 'El usuario con correo {} ya existe'.format(data.get('correo'))
             }
 
-
 class LoginController(Resource):
     def post(self):
         data = request.get_json()
@@ -70,8 +70,27 @@ class LoginController(Resource):
                     'message':'El usuario no existe'
                 }, 404
             print(usuarioEncontrado)
+            password = usuarioEncontrado.password
+            # convertimos la password de la bd a bytes
+            passwordBytes = bytes(password,'utf-8')
+            passwordEntranteBytes = bytes(dataSerializada.get('password'), 'utf-8')
+            validacionPassword = checkpw(passwordEntranteBytes, passwordBytes)
+
+            # if not validacionPassword:
+            if validacionPassword == False:
+                return {
+                    'message': 'Credenciales incorrectas'
+                }, 400
+            
+            informacionAdicional = {
+                'correo': usuarioEncontrado.correo
+            }
+
+            jwt = create_access_token(identity= usuarioEncontrado.id, additional_claims= informacionAdicional)
+
             return {
-                'message': 'Bienvenido'
+                'message': 'Bienvenido',
+                'content': jwt
             }
         
         except ValidationError as error:
@@ -79,3 +98,19 @@ class LoginController(Resource):
                 'message': 'Error al hacer el login',
                 'content': error.args
             }
+        
+class PerfilController(Resource):
+    # indica que ahora este metodo le tenemos que pasar de manera obligatoria la token y este metodo validara que la token sea correcta y que tenga tiempo de vida y sino no podremos ingresar al metodo
+    @jwt_required()
+    def get(self):
+        # devuelve el identificador de la token (id del usuario)
+        identificador = get_jwt_identity()
+        print(identificador)
+        
+        usuarioEncontrado = conexion.session.query(UsuarioModel).where(UsuarioModel.id == identificador).first()
+        serializador = RegistroSerializer()
+        resultado = serializador.dump(usuarioEncontrado)
+
+        return {
+            'content': resultado
+        }

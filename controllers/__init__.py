@@ -3,4 +3,5 @@ from controllers.categoria_controllers import (CategoriasController,
 
 from controllers.producto_controllers import (ProductosController)
 from controllers.usuario_controller import (RegistroController,
-                                            LoginController)
+                                            LoginController,
+                                            PerfilController)
