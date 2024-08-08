@@ -6,4 +6,4 @@
 # exportador de todas nuestra funcionabilidad de la carpeta
 from models.categoria import CategoriaModel
 from models.producto import ProductoModel
-from models.usuario import UsuarioModel
+from models.usuario import UsuarioModel, TipoUsuario
