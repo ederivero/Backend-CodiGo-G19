@@ -5,4 +5,5 @@ from controllers.producto_controllers import (ProductosController)
 from controllers.usuario_controller import (RegistroController,
                                             LoginController,
                                             PerfilController,
-                                            CambiarPasswordController)
+                                            CambiarPasswordController,
+                                            ResetearPasswordController)
