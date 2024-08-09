@@ -24,3 +24,12 @@ class RegistroSerializer(SQLAlchemyAutoSchema):
 class LoginSerializer(Schema):
     correo = fields.Email(required=True)
     password = fields.String(required=True)
+
+
+class ActualizarUsuarioSerializer(Schema):
+    nombre = fields.String(required=True)
+
+class CambiarPasswordSerializer(Schema):
+    passwordAntigua = fields.String(required=True)
+    # Expresion regular para tener una password de al menos una minuscula, una mayuscula, un numero y un caracter especial y una longitud de no menor a 6 caracteres
+    passwordNueva = fields.String(required=True, validate=validate.Regexp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&?!])[A-Za-z\d@#$%^&?!]{6,}$'))

@@ -3,4 +3,6 @@ from serializers.categoria_serializer import (CategoriaSerializer,
 
 from serializers.producto_serializer import (ProductoSerializer)
 from serializers.usuario_serializer import (RegistroSerializer, 
-                                            LoginSerializer)
+                                            LoginSerializer,
+                                            ActualizarUsuarioSerializer,
+                                            CambiarPasswordSerializer)
