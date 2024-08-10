@@ -6,7 +6,8 @@ from serializers import (RegistroSerializer,
                          ActualizarUsuarioSerializer,
                          CambiarPasswordSerializer,
                          ResetearPasswordSerializer,
-                         ConfirmarResetTokenSerializer)
+                         ConfirmarResetTokenSerializer,
+                         ConfirmarResetPasswordSerializer)
 from marshmallow.exceptions import ValidationError
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy.exc import IntegrityError
@@ -298,13 +299,62 @@ class ConfirmarResetTokenController(Resource):
             informacion = loads(desencriptarTexto(dataValidada.get('token')))
 
             print(informacion)
+            usuarioEncontrado = conexion.session.query(UsuarioModel).where(
+                UsuarioModel.correo == informacion.get('correo')).first()
+
+            if not usuarioEncontrado:
+                return {
+                    'message': 'Usuario no existe'
+                }, 400
+
+            serializador = RegistroSerializer()
+            resultado = serializador.dump(usuarioEncontrado)
 
             return {
-                'message': ''
+                'content': resultado
             }
 
         except ValidationError as error:
             return {
                 'message': 'Error al hacer el request',
+                'content': error.args
+            }, 400
+
+
+class ConfirmarResetPasswordController(Resource):
+    def post(self):
+        data = request.get_json()
+        serializador = ConfirmarResetPasswordSerializer()
+
+        try:
+            dataValidada = serializador.load(data)
+            # convertir a un diccionario
+            informacion = desencriptarTexto(dataValidada.get('token'))
+            # { 'correo' : '....' }
+            dataToken = loads(informacion)
+            # Buscar el usuario en la bd
+            usuarioEncontrado = conexion.session.query(UsuarioModel).where(
+                UsuarioModel.correo == dataToken.get('correo')).first()
+
+            if not usuarioEncontrado:
+                return {
+                    'message': 'Usuario no existe'
+                }, 400
+            # modificar la contraseña del usuario pero antes generar el hash de la misma
+            salt = gensalt()
+            nuevaPassword = dataValidada.get('nuevaPassword')
+
+            nuevaPasswordHash = hashpw(
+                bytes(nuevaPassword, 'utf-8'), salt).decode('utf-8')
+
+            usuarioEncontrado.password = nuevaPasswordHash
+
+            conexion.session.commit()
+            return {
+                'message': 'Password modificada exitosamente'
+            }, 200
+        except ValidationError as error:
+            return {
+                'message': 'Error al cambiar la password',
                 'content': error.args
             }, 400

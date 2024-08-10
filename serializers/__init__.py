@@ -7,4 +7,5 @@ from serializers.usuario_serializer import (RegistroSerializer,
                                             ActualizarUsuarioSerializer,
                                             CambiarPasswordSerializer,
                                             ResetearPasswordSerializer,
-                                            ConfirmarResetTokenSerializer)
+                                            ConfirmarResetTokenSerializer,
+                                            ConfirmarResetPasswordSerializer)

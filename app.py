@@ -48,6 +48,7 @@ api.add_resource(PerfilController, '/perfil')
 api.add_resource(CambiarPasswordController, '/cambiar-password')
 api.add_resource(ResetearPasswordController, '/reset-password')
 api.add_resource(ConfirmarResetTokenController, '/validar-token')
+api.add_resource(ConfirmarResetPasswordController, '/confirm-reset-password')
 
 if __name__ == '__main__':
     app.run(debug=True)
