@@ -3,15 +3,16 @@ from math import ceil
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 # Simple Mail Transfer Protocol
-from smtplib import SMTP_SSL, SMTP
-from ssl import create_default_context
+from smtplib import SMTP
 from os import environ
+from cryptography.fernet import Fernet
 
-def serializadorPaginacion(total:int, pagina: int, porPagina: int):
+
+def serializadorPaginacion(total: int, pagina: int, porPagina: int):
     # Operador TERNARIO
     #           VAL_VERDADERO IF CONDICIONAL     ELSE VALOR_FALSO
     itemsPorPagina = porPagina if total >= porPagina else total
-    
+
     # Forma tradicional
     # if total >= porPagina:
     #     itemsPorPagina = porPagina
@@ -32,14 +33,14 @@ def serializadorPaginacion(total:int, pagina: int, porPagina: int):
         "paginaSiguiente": paginaSiguiente,
         "porPagina": porPagina,
         "pagina": pagina
-        }
+    }
 
 
 def enviarCorreo(destinatario, titulo, texto, html):
     if not destinatario:
         print('Es necesario el correo')
         return
-    
+
     emailEmisor = environ.get('CORREO_EMISOR')
     passwordEmisor = environ.get('PASSWORD_CORREO_EMISOR')
 
@@ -64,10 +65,29 @@ def enviarCorreo(destinatario, titulo, texto, html):
     emisor = SMTP(environ.get('CORREO_HOST'), 587)
     emisor.starttls()
 
-    emisor.login(emailEmisor,passwordEmisor)
+    emisor.login(emailEmisor, passwordEmisor)
     # es importante colocar la direccion del emisor y tiene que ser igual que la del login porque sino puede lanzar errores de autenticacion
-    emisor.sendmail(from_addr=emailEmisor, to_addrs=destinatario, msg=correo.as_string())
+    emisor.sendmail(from_addr=emailEmisor,
+                    to_addrs=destinatario, msg=correo.as_string())
 
     emisor.quit()
 
     print('Correo enviado exitosamente')
+
+
+def encriptarTexto(texto):
+    fernet = Fernet(environ.get('FERNET_KEY'))
+
+    textoEncriptado: bytes = fernet.encrypt(bytes(texto, 'utf-8'))
+
+    # convertimos los byes a string
+    return textoEncriptado.decode('utf-8')
+
+
+def desencriptarTexto(textoEncriptado):
+    print(textoEncriptado)
+    fernet = Fernet(environ.get('FERNET_KEY'))
+
+    texto = fernet.decrypt(textoEncriptado)
+
+    return texto

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./index.js"></script>
+  </head>
+  <body>
+    <form id="update-password">
+      <div>
+        <label for="pwd1">Ingrese su nueva password</label>
+        <input type="text" name="pwd1" id="pwd1" />
+      </div>
+
+      <div>
+        <label for="pwd2">Repita su nueva password</label>
+        <input type="text" name="pwd2" id="pwd2" />
+      </div>
+
+      <div>
+        <button id="confirm-button">Confirmar</button>
+      </div>
+    </form>
+
+    <div id="invalid-token" style="display: none">
+      <p>Token incorrecta</p>
+    </div>
+  </body>
+</html>

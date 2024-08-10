@@ -1,9 +1,10 @@
-from serializers.categoria_serializer import (CategoriaSerializer, 
+from serializers.categoria_serializer import (CategoriaSerializer,
                                               ManualCategoriaSerializer)
 
 from serializers.producto_serializer import (ProductoSerializer)
-from serializers.usuario_serializer import (RegistroSerializer, 
+from serializers.usuario_serializer import (RegistroSerializer,
                                             LoginSerializer,
                                             ActualizarUsuarioSerializer,
                                             CambiarPasswordSerializer,
-                                            ResetearPasswordSerializer)
+                                            ResetearPasswordSerializer,
+                                            ConfirmarResetTokenSerializer)
