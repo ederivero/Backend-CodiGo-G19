@@ -1,0 +1,2 @@
+django-admin startproject NOMBRE_PROYECTO > creara el proyecto dentro de la carpeta con ese nombre
+django-admin startapp NOMBRE_APLICACION   > creara la aplicacion dentro del proyecto
