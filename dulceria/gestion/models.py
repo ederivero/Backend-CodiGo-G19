@@ -20,7 +20,7 @@ class Golosina(models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     nombre = models.TextField(null=False)
     precio = models.FloatField(db_column='precio')
-    imagen = models.ImageField(upload_to='/imagenes', null=True)
+    imagen = models.ImageField(upload_to='imagenes', null=True)
     habilitado = models.BooleanField(default=True)
 
     # relacion entre dos tablas

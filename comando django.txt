@@ -1,2 +1,3 @@
 django-admin startproject NOMBRE_PROYECTO > creara el proyecto dentro de la carpeta con ese nombre
 django-admin startapp NOMBRE_APLICACION   > creara la aplicacion dentro del proyecto
+python manage.py makemigrations NOMBRE_APP --name NOMBRE_MIGRACION > lee los modelos creados / cambiados y crea la migracion correspondiente
