@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Categoria
+from .models import Categoria, Golosina
 
 
 class CategoriaSerializer(ModelSerializer):
@@ -13,3 +13,9 @@ class CategoriaSerializer(ModelSerializer):
         # exclude = ['id']
 
         # NOTA: no se puede utilizar el fields y el exclude al mismo tiempo, es uno o el otro
+
+
+class GolosinaSerializer(ModelSerializer):
+    class Meta:
+        model = Golosina
+        fields = '__all__'
