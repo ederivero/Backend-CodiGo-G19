@@ -1,0 +1,22 @@
+{# Aca heredamos la plantilla base #} 
+{% extends "base.html" %}
+{% block titulo %}Pagina de Prueba{% endblock%}
+
+{% block contenido %}
+<p>Hola {{ usuario }} desde Django!</p>
+<p>Las categorias son:</p>
+<table class="table table-striped">
+  <tr>
+    <th>id</th>
+    <th>nombre</th>
+    <th>habilitado</th>
+  </tr>
+  {% for categoria in data %}
+  <tr>
+    <td>{{ categoria.id }}</td>
+    <td>{{ categoria.nombre }}</td>
+    <td>{{ categoria.habilitado }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
