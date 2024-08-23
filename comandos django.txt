@@ -1,0 +1,3 @@
+python manage.py sqlmigrate NOMBRE_APP NUMERO_MIGRACION > mostrara el lenguaje SQL de la migracion
+
+python manage.py dbshell                                > creara una conexion por terminal con la bd en la cual podremos navegar en la informacion

@@ -10,11 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 from os import environ
 from pathlib import Path
 from dotenv import load_dotenv
+from cloudinary import config
 
 load_dotenv()
+
+
+config(cloud_name=environ.get('CLOUDINARY_NAME'),
+       api_key=environ.get('CLOUDINARY_API_KEY'),
+       api_secret=environ.get('CLOUDINARY_API_SECRET'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,7 +87,7 @@ WSGI_APPLICATION = 'lista_bodas.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': environ.get('DB_NAME'),
         'HOST': environ.get('DB_HOST'),
         'PASSWORD': environ.get('DB_PASSWORD'),
@@ -132,3 +139,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'gestion.Usuario'
+
+# Van todas las configuraciones del django rest framework, aca puede ir autenticaciones, paginaciones, filtrados, tamaño de paginas, entre otros
+# https://www.django-rest-framework.org/api-guide/settings/
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+# Aca haremos todas las configuraciones de nuestra libreria de JWT
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1)
+}
