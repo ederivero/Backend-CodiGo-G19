@@ -12,8 +12,10 @@ from rest_framework.permissions import (
     # Si el metodo a acceder es GET no sera necesaria la token, caso contrario sera obligatoria (x ejemplo para un post , put, delete)
     IsAuthenticatedOrReadOnly
 )
-from .models import Usuario
-from .serializers import RegistroSerializer
+from .models import Usuario, ListaNovio
+from .serializers import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNovioSerializer
+from .permissions import EsAdministrador
+from django.db import transaction
 
 
 @api_view(http_method_names=['POST'])
@@ -54,6 +56,70 @@ def crearUsuario(request):
 @permission_classes([IsAuthenticated])
 def perfilUsuario(request):
 
+    print(request.user.nombre)
+    print(request.auth)
+    # cuando queremos pasar una instancia a nuestro serializador usaremos el parametro instance, sin embargo si queremos pasarle informacion para que la valide usaremos el parametro data
+    serializador = UsuarioSerializer(instance=request.user)
+
     return Response(data={
-        'message': ''
+        'content': serializador.data
     })
+
+
+class ListaNoviosAPIView(APIView):
+    # Primero validara que el usuario este autenticado y luego validara que sea administrador
+    permission_classes = [IsAuthenticated, EsAdministrador]
+
+    def post(self, request):
+        serializador = ListaNoviosCreacionSerializer(data=request.data)
+        if serializador.is_valid():
+            print(serializador.validated_data)
+            # utilizar transacciones de sql
+            # https://docs.djangoproject.com/en/5.1/topics/db/transactions/
+            with transaction.atomic():
+                # todo lo que hagamos tiene que completarse exitosamente, si algo falla entonces todas las inserciones, actualizaciones y eliminaciones quedaran sin efecto
+                nuevoNovio = Usuario(nombre=serializador.validated_data.get('novio').get('nombre'),
+                                     apellido=serializador.validated_data.get(
+                                         'novio').get('apellido'),
+                                     correo=serializador.validated_data.get(
+                                         'novio').get('correo'),
+                                     tipoUsuario='NOVIO')
+
+                nuevoNovio.set_password(
+                    serializador.validated_data.get('novio').get('password'))
+
+                nuevoNovia = Usuario(nombre=serializador.validated_data.get('novia').get('nombre'),
+                                     apellido=serializador.validated_data.get(
+                                         'novia').get('apellido'),
+                                     correo=serializador.validated_data.get(
+                                         'novia').get('correo'),
+                                     tipoUsuario='NOVIO')
+
+                nuevoNovia.set_password(
+                    serializador.validated_data.get('novia').get('password'))
+
+                nuevoNovio.save()
+                nuevoNovia.save()
+
+                nuevaLista = ListaNovio(
+                    novio=nuevoNovio, novia=nuevoNovia)
+                nuevaLista.save()
+
+            print(nuevaLista)
+            return Response(data={
+                'message': 'Lista creada exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={
+                'message': 'Error al crear la lista de novios',
+                'content': serializador.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        resultado = ListaNovio.objects.all()
+        # Si al parametro instance le vamos a pasar una lista entonces tenemos que indicarle al serializador para que pueda hacer la iteracion de la lista y transformar cada uno de los elementos
+        serializador = ListaNovioSerializer(instance=resultado, many=True)
+
+        return Response(data={
+            'content': serializador.data
+        })
