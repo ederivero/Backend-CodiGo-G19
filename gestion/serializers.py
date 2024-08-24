@@ -41,6 +41,12 @@ class ListaNoviosCreacionSerializer(serializers.Serializer):
 
 
 class ListaNovioSerializer(serializers.ModelSerializer):
+    # Si queremos definir atributos a mostrar (no todos) de los modelos anidados
+    novio = UsuarioSerializer()
+    # si queremos cambiar el nombre del atributo por otro y para seguir utilizando el valor del atributo antiguo tenemos que utilizar el parametro source e indicar que atributo usaremos para crear en el serializador el nuevo atributo. No se puede colocar el mismo nombre y el source
+    laNovia = UsuarioSerializer(source='novia')
+    # novia = UsuarioSerializer(source='novia')
+
     class Meta:
         model = ListaNovio
         fields = '__all__'
@@ -52,5 +58,4 @@ class ListaNovioSerializer(serializers.ModelSerializer):
         # ingresara la lista novios, a los novios y a las ciudades
         # depth = 3
         # ingresara la lista novios, a los novios, a las ciudades y al pais
-
-        depth = 1
+        # depth = 1
