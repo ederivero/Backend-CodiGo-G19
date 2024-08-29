@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, ListaNovio
+from .models import Usuario, ListaNovio, Regalo
 
 # ModelSerializer > Sirve para crear un serializador PERO basandonos en un modelo de nuestros Models, es decir, utilizara todos los atributos (Columnas) del modelo para hacer las validaciones (not null, unique, primary key, etc)
 # Serializer > Crear un serializador pero sin la necesidad de basarse en un model (tabla) sino que completamente modificable y no tendra como base un modelo (tabla)
@@ -59,3 +59,9 @@ class ListaNovioSerializer(serializers.ModelSerializer):
         # depth = 3
         # ingresara la lista novios, a los novios, a las ciudades y al pais
         # depth = 1
+
+
+class RegaloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Regalo
+        fields = '__all__'

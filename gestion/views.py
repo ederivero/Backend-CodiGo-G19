@@ -1,3 +1,4 @@
+from django.db.models import Q
 from datetime import datetime
 from os import environ
 from cloudinary import utils
@@ -16,8 +17,8 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 from .models import Usuario, ListaNovio, Regalo
-from .serializers import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNovioSerializer
-from .permissions import EsAdministrador
+from .serializers import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNovioSerializer, RegaloSerializer
+from .permissions import EsAdministrador, EsNovio
 from django.db import transaction
 
 
@@ -132,26 +133,43 @@ class ListaNoviosAPIView(APIView):
 
 
 class RegalosAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly, EsNovio]
+
     def post(self, request):
         # TAREA!
         # Crear un serializador para obtener la informacion de crear un regalo
         # en el campo de la imagen enviar la url que cloudinary nos brinda (la segura)
         # Solamente LOS NOVIOS PUEDEN agregar regalos y buscar la lista de novios del novio o novia en la cual se quiere agregar el regalo
+        print(request.user)
+        # SELECT * FROM lista_novios WHERE novio_id = '...' OR novia_id = '...';
+        listaEncontrada = ListaNovio.objects.filter(
+            Q(novio=request.user) | Q(novia=request.user))
 
-        return Response(data={
-            'message': 'Regalo creado exitosamente'
-        }, status=status.HTTP_201_CREATED)
-    
+        print(listaEncontrada)
+        serializador = RegaloSerializer(data=request.data)
+        if serializador.is_valid():
+
+            return Response(data={
+                'message': 'Regalo creado exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={
+                'message': 'Hubo un error ',
+                'content': serializador.errors
+            })
+
     def get(self, request):
         # Retornar todos los regalos del novio que actualmente esta logeado
 
         # SELECT * FROM lista_novios WHERE novio_id = 1 LIMIT 1 ;
-        listNovioEncontrado = ListaNovio.objects.filter(novio = 1).first()
-        regalos = Regalo.objects.filter(listaNovio = listNovioEncontrado.id).all()
-        
+        listNovioEncontrado = ListaNovio.objects.filter(novio=1).first()
+        regalos = Regalo.objects.filter(
+            listaNovio=listNovioEncontrado.id).all()
+
         return Response(data={
-            'message':''
+            'message': ''
         })
+
 
 @api_view(http_method_names=['POST'])
 def generarCloudinaryUrl(request):
@@ -159,7 +177,8 @@ def generarCloudinaryUrl(request):
     signature = utils.api_sign_request(
         {'timestamp': timestamp}, environ.get('CLOUDINARY_API_SECRET'))
 
-    url = f'https://api.cloudinary.com/v1_1/{environ.get('CLOUDINARY_NAME')}/image/upload?api_key={environ.get('CLOUDINARY_API_KEY')}&timestamp={timestamp}&signature={signature}'
+    url = f'https://api.cloudinary.com/v1_1/{environ.get('CLOUDINARY_NAME')}/image/upload?api_key={
+        environ.get('CLOUDINARY_API_KEY')}&timestamp={timestamp}&signature={signature}'
     return Response({
         'content': url
     })
