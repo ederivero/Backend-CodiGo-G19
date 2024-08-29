@@ -1,0 +1,25 @@
+{
+  "name": "express_api",
+  "version": "1.0.0",
+  "description": "Mi primera API de express",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "development": "nodemon index.js"
+  },
+  "keywords": [
+    "express",
+    "api",
+    "codigo",
+    "node"
+  ],
+  "author": "Eduardo de Rivero",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.21",
+    "nodemon": "^3.1.4"
+  }
+}
