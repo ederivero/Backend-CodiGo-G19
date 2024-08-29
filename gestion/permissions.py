@@ -24,6 +24,8 @@ class EsNovio(permissions.BasePermission):
     def has_object_permission(self, request, view):
         tipo_usuario = request.user.tipoUsuario
 
+        return True if tipo_usuario == 'NOVIO' else False
+
         if tipo_usuario == 'NOVIO':
             return True
         else:

@@ -142,19 +142,31 @@ class RegalosAPIView(APIView):
         # Solamente LOS NOVIOS PUEDEN agregar regalos y buscar la lista de novios del novio o novia en la cual se quiere agregar el regalo
         print(request.user)
         # SELECT * FROM lista_novios WHERE novio_id = '...' OR novia_id = '...';
+        # https://docs.djangoproject.com/en/5.1/topics/db/queries/#complex-lookups-with-q-objects
         listaEncontrada = ListaNovio.objects.filter(
-            Q(novio=request.user) | Q(novia=request.user))
+            Q(novio=request.user) | Q(novia=request.user)).first()
+
+        if not listaEncontrada:
+            return Response(data={
+                'message': 'El novio/a no tiene aun una lista creada, comuniquese con el administrador'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         print(listaEncontrada)
+        # Ahora agregamos el registro de nuestra lista novios al body para pasarlo por el serializador
+        request.data['listaNovio'] = listaEncontrada.id
+
         serializador = RegaloSerializer(data=request.data)
         if serializador.is_valid():
 
+            serializador.save()
+
             return Response(data={
-                'message': 'Regalo creado exitosamente'
+                'message': 'Regalo creado exitosamente',
+                'content': serializador.data
             }, status=status.HTTP_201_CREATED)
         else:
             return Response(data={
-                'message': 'Hubo un error ',
+                'message': 'Hubo un error al crear el regalo',
                 'content': serializador.errors
             })
 
