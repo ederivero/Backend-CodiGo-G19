@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL1")
+}
+
+model Receta {
+  // @id > indica que la columna sera PK
+  // @db > sirve para indicar con mayor precision que tipo de dato sera 
+  // https://www.prisma.io/docs/orm/prisma-migrate/workflows/native-database-types#mappings-by-database-provider
+  // Datatype? > indica que la columna puede tener valores nulos
+  // @default(VALOR) > indica cual sera el valor en el caso que el usuario no me lo envie al momento de crear/ actualizar
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.Text
+  descripcion String?
+  habilitado  Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  ingredientes  Ingrediente[]
+  preparaciones Preparacion[]
+
+  // Como se llamara la tabla en la bd
+  // Siempre que queramos modificar algo de la tabla se usa el @@ y si es algo relacion a la columna: @
+  @@map("recetas")
+}
+
+model Ingrediente {
+  id     Int    @id @default(autoincrement())
+  titulo String
+
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  @@map("ingredientes")
+}
+
+model Preparacion {
+  id          Int      @id @default(autoincrement())
+  orden       Int
+  descripcion String
+  // @updatedAt > sirve para que automaticamente cuando se modifique un registro de la bd se cambie su valor a la hora actual del servidor
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  // @@unique > en django seria como el unique_together sirve para indicar dos o mas columnas cuyos valores juntos no se pueden repetir
+  @@unique([orden, recetaId])
+  @@map("preparaciones")
+}
