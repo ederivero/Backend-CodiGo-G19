@@ -1,7 +1,10 @@
 import { Router } from "express";
-import { crearEquipo } from "./controllers/equipo.controller.js";
-// Agregar libreria para esperar los errores sincronos de nuestros controladores
+import { crearEquipo, listarEquipos } from "./controllers/equipo.controller.js";
+import asyncHandler from "express-async-handler";
 
 export const rutas = Router();
 
-rutas.route("/equipos").post(crearEquipo);
+rutas
+  .route("/equipos")
+  .post(asyncHandler(crearEquipo))
+  .get(asyncHandler(listarEquipos));
