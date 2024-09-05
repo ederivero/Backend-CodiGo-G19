@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_2")
+}
+
+model Fecha {
+  id       String    @id @default(uuid()) @db.Uuid
+  nombre   String    @unique
+  partidos Partido[]
+
+  @@map("fechas")
+}
+
+model Usuario {
+  id       String      @id @default(uuid()) @db.Uuid
+  email    String      @unique
+  password String
+  rol      USUARIO_ROL @default(CLIENTE)
+
+  @@map("usuarios")
+}
+
+model Equipo {
+  id                 String    @id @default(uuid()) @db.Uuid
+  nombre             String    @unique
+  imagen             String?
+  jugadores          Jugador[]
+  partidosLocales    Partido[] @relation(name: "equipo_local")
+  partidosVisitantes Partido[] @relation(name: "equipo_visitante")
+
+  @@map("equipos")
+}
+
+model Jugador {
+  id              String   @id @default(uuid()) @db.Uuid
+  nombre          String
+  posicion        String?
+  fechaNacimiento DateTime @map("fecha_nacimiento") @db.Date
+  equipoId        String   @map("equipo_id") @db.Uuid
+  equipo          Equipo   @relation(references: [id], fields: [equipoId], onDelete: Restrict)
+
+  @@map("jugadores")
+}
+
+model Partido {
+  id                String         @id @default(uuid()) @db.Uuid
+  fechaId           String         @map("fecha_id") @db.Uuid
+  equipoLocalId     String         @map("equipo_local_id") @db.Uuid
+  equipoVisitanteId String         @map("equipo_visitante_id") @db.Uuid
+  fechaPartido      DateTime       @map("fecha_partido") @db.Date
+  hora              DateTime       @db.Time()
+  zonaHoraria       String         @map("zona_horaria")
+  lugar             String
+  estado            PARTIDO_ESTADO @default(POR_EMPEZAR)
+  marcadorLocal     Int            @map("marcador_local")
+  marcadorVisitante Int            @map("marcador_visitante")
+
+  // Relaciones
+  fecha           Fecha  @relation(fields: [fechaId], references: [id])
+  equipoLocal     Equipo @relation(fields: [equipoLocalId], references: [id], name: "equipo_local")
+  equipoVisitante Equipo @relation(fields: [equipoVisitanteId], references: [id], name: "equipo_visitante")
+}
+
+enum USUARIO_ROL {
+  ADMINISTRADOR
+  CLIENTE
+}
+
+enum PARTIDO_ESTADO {
+  POR_EMPEZAR
+  EMPEZADO
+  FINALIZADO
+  SUSPENDIDO
+}

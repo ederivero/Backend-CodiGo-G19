@@ -1,0 +1,23 @@
+{
+  "name": "fixture_eliminatorias",
+  "version": "1.0.0",
+  "description": "Fixture para ver los resultados de las eliminatorias",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eduardo de Rivero",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.19.1"
+  }
+}
