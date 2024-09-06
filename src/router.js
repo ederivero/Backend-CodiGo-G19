@@ -6,12 +6,16 @@ import {
   perfilUsuario,
 } from "./controllers/usuario.controller.js";
 import asyncHandler from "express-async-handler";
-import { validarToken } from "./utils.js";
+import { validarToken, validarAdmin } from "./utils.js";
 export const rutas = Router();
 
 rutas
   .route("/equipos")
-  .post(asyncHandler(crearEquipo))
+  .post(
+    asyncHandler(validarToken),
+    asyncHandler(validarAdmin),
+    asyncHandler(crearEquipo)
+  )
   .get(asyncHandler(listarEquipos));
 
 rutas.route("/registro").post(asyncHandler(registroUsuario));

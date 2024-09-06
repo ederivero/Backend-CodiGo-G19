@@ -74,7 +74,12 @@ export const login = async (req, res) => {
 };
 
 export const perfilUsuario = async (req, res) => {
+  // Destructurar un JSON
+  // ...variable Todo lo demas guardarlo en una variable nueva
+  const { password, ...data } = req.usuario;
+
   return res.json({
     message: "El perfil es",
+    content: data,
   });
 };
