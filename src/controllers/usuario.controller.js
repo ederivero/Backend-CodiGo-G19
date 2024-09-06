@@ -72,3 +72,9 @@ export const login = async (req, res) => {
     content: token,
   });
 };
+
+export const perfilUsuario = async (req, res) => {
+  return res.json({
+    message: "El perfil es",
+  });
+};
