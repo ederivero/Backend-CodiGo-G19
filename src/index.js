@@ -2,8 +2,10 @@ import express from "express";
 import morgan from "morgan";
 import { rutas } from "./router.js";
 import AWS from "aws-sdk";
+import cors from "cors";
 
 const servidor = express();
+servidor.use(cors({ origin: "*" }));
 
 // Basta con que inicialice mi cliente de AWS al comienzo para poder utilizarlo donde sea
 AWS.config.update({
