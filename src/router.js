@@ -5,6 +5,7 @@ import {
   login,
   perfilUsuario,
 } from "./controllers/usuario.controller.js";
+import { generarUrlFirmada } from "./controllers/imagen.controller.js";
 import asyncHandler from "express-async-handler";
 import { validarToken, validarAdmin } from "./utils.js";
 export const rutas = Router();
@@ -25,3 +26,5 @@ rutas.route("/login").post(asyncHandler(login));
 rutas
   .route("/perfil")
   .get(asyncHandler(validarToken), asyncHandler(perfilUsuario));
+
+rutas.route("/generar-url").post(asyncHandler(generarUrlFirmada));

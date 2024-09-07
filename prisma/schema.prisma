@@ -31,12 +31,13 @@ model Usuario {
 }
 
 model Equipo {
-  id                 String    @id @default(uuid()) @db.Uuid
-  nombre             String    @unique
-  imagen             String?
+  id     String @id @default(uuid()) @db.Uuid
+  nombre String @unique
+
   jugadores          Jugador[]
   partidosLocales    Partido[] @relation(name: "equipo_local")
   partidosVisitantes Partido[] @relation(name: "equipo_visitante")
+  imagen             Imagen[]
 
   @@map("equipos")
 }
@@ -48,6 +49,7 @@ model Jugador {
   fechaNacimiento DateTime @map("fecha_nacimiento") @db.Date
   equipoId        String   @map("equipo_id") @db.Uuid
   equipo          Equipo   @relation(references: [id], fields: [equipoId], onDelete: Restrict)
+  imagen          Imagen[]
 
   @@map("jugadores")
 }
@@ -69,6 +71,21 @@ model Partido {
   fecha           Fecha  @relation(fields: [fechaId], references: [id])
   equipoLocal     Equipo @relation(fields: [equipoLocalId], references: [id], name: "equipo_local")
   equipoVisitante Equipo @relation(fields: [equipoVisitanteId], references: [id], name: "equipo_visitante")
+}
+
+model Imagen {
+  id          String  @id @default(uuid()) @db.Uuid
+  key         String  @unique
+  path        String?
+  contentType String  @map("content_type")
+  extension   String
+  equipoId    String? @map("equipo_id") @db.Uuid
+  jugadorId   String? @map("jugador_id") @db.Uuid
+
+  equipo  Equipo?  @relation(references: [id], fields: [equipoId])
+  jugador Jugador? @relation(references: [id], fields: [jugadorId])
+
+  @@map("imagenes")
 }
 
 enum USUARIO_ROL {

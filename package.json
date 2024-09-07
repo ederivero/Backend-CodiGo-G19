@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "aws-sdk": "^2.1691.0",
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
@@ -31,7 +32,7 @@
     "nodemon": "^3.1.4",
     "prisma": "^5.19.1"
   },
-  "prisma":{
+  "prisma": {
     "seed": "node prisma/seed.js"
   }
 }
