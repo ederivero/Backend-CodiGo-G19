@@ -51,6 +51,8 @@ if (window.location.pathname.includes("crear-equipo.html")) {
         }
 
         return fetch(`${BACKEND_URL}/imagen`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             key: imagen.name.split(".")[0],
             path: "equipos",
@@ -63,7 +65,8 @@ if (window.location.pathname.includes("crear-equipo.html")) {
         return resultadoImagen.json();
       })
       .then((imagenCreada) => {
-        imagenCreadaId = imagenCreada.id;
+        console.log(imagenCreada);
+        imagenCreadaId = imagenCreada.content.id;
       })
       .catch((e) => {
         console.log(e);
@@ -73,8 +76,11 @@ if (window.location.pathname.includes("crear-equipo.html")) {
   btnCrearEquipo.addEventListener("click", (e) => {
     e.preventDefault();
 
-    fetch(`${BACKEND_URL}/equipo`, {
+    fetch(`${BACKEND_URL}/equipos`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         nombre: nombreEquipo.value,
         imagenId: imagenCreadaId,

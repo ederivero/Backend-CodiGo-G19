@@ -14,10 +14,23 @@ export const crearEquipo = async (req, res) => {
   const equipoCreado = await conexion.equipo.create({
     data: {
       nombre: value.nombre,
-      imagen: value.imagen,
     },
   });
 
+  if (value.imagenId) {
+    const imagenEncontrada = await conexion.imagen.findUniqueOrThrow({
+      where: { id: value.imagenId },
+      select: { id: true },
+    });
+
+    await conexion.imagen.update({
+      where: { id: imagenEncontrada.id },
+      data: {
+        // equipoId: equipoCreado.id, // Usando la llave foranea (FK)
+        equipo: { connect: { id: equipoCreado.id } }, // Usando la relacion entre imagen y equipo
+      },
+    });
+  }
   return res.status(201).json({
     message: "Equipo creado exitosamente",
     content: equipoCreado,

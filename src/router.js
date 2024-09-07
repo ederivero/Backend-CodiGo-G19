@@ -5,7 +5,11 @@ import {
   login,
   perfilUsuario,
 } from "./controllers/usuario.controller.js";
-import { generarUrlFirmada } from "./controllers/imagen.controller.js";
+import {
+  generarUrlFirmada,
+  crearImagen,
+  devolverImagen,
+} from "./controllers/imagen.controller.js";
 import asyncHandler from "express-async-handler";
 import { validarToken, validarAdmin } from "./utils.js";
 export const rutas = Router();
@@ -13,8 +17,8 @@ export const rutas = Router();
 rutas
   .route("/equipos")
   .post(
-    asyncHandler(validarToken),
-    asyncHandler(validarAdmin),
+    // asyncHandler(validarToken),
+    // asyncHandler(validarAdmin),
     asyncHandler(crearEquipo)
   )
   .get(asyncHandler(listarEquipos));
@@ -28,3 +32,7 @@ rutas
   .get(asyncHandler(validarToken), asyncHandler(perfilUsuario));
 
 rutas.route("/generar-url").post(asyncHandler(generarUrlFirmada));
+
+rutas.route("/imagen").post(asyncHandler(crearImagen));
+
+rutas.route("/imagen/:id").get(asyncHandler(devolverImagen));
