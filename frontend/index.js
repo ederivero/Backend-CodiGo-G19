@@ -9,12 +9,10 @@ btnComenzar?.addEventListener("click", (e) => {
   window.location.href = "crear-equipo.html";
 });
 
-console.log(window.location.pathname);
-
 // Cuando estemos en crear Equipo
 if (window.location.pathname.includes("crear-equipo.html")) {
   let imagen;
-
+  let imagenCreadaId;
   const generarUrlImagen = async () => {
     if (imagen) {
       const resultado = await fetch(`${BACKEND_URL}/generar-url`, {
@@ -26,7 +24,7 @@ if (window.location.pathname.includes("crear-equipo.html")) {
           key: imagen.name.split(".")[0],
           path: "equipos",
           contentType: imagen.type,
-          extension: imagen.name.split(".").slice(-1)[0],
+          extension: imagen.name.split(".").slice(-1)[0], // La ultima posicion de un arreglo
         }),
       });
 
@@ -51,6 +49,21 @@ if (window.location.pathname.includes("crear-equipo.html")) {
         if (!status) {
           console.error("Error al subir la imagen");
         }
+
+        return fetch(`${BACKEND_URL}/imagen`, {
+          body: JSON.stringify({
+            key: imagen.name.split(".")[0],
+            path: "equipos",
+            contentType: imagen.type,
+            extension: imagen.name.split(".").slice(-1)[0],
+          }),
+        });
+      })
+      .then((resultadoImagen) => {
+        return resultadoImagen.json();
+      })
+      .then((imagenCreada) => {
+        imagenCreadaId = imagenCreada.id;
       })
       .catch((e) => {
         console.log(e);
@@ -64,12 +77,7 @@ if (window.location.pathname.includes("crear-equipo.html")) {
       method: "POST",
       body: JSON.stringify({
         nombre: nombreEquipo.value,
-        imagen: {
-          key: imagen.name.split(".")[0],
-          path: "equipos",
-          contentType: imagen.type,
-          extension: imagen.name.split(".").slice(-1)[0],
-        },
+        imagenId: imagenCreadaId,
       }),
     })
       .then((r) => {
