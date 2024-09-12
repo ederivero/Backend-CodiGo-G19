@@ -41,9 +41,11 @@ if (window.location.pathname.includes("crear-equipo.html")) {
   imagenEquipo.addEventListener("change", (e) => {
     imagen = imagenEquipo.files[0];
     console.log(imagenEquipo.files[0]);
+    let imagenKey = imagen.name.split(".")[0];
     generarUrlImagen()
       .then((r) => {
-        return subirAlBucket(r.content);
+        imagenKey = r.content.key;
+        return subirAlBucket(r.content.url);
       })
       .then((status) => {
         if (!status) {
@@ -54,7 +56,7 @@ if (window.location.pathname.includes("crear-equipo.html")) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            key: imagen.name.split(".")[0],
+            key: imagenKey,
             path: "equipos",
             contentType: imagen.type,
             extension: imagen.name.split(".").slice(-1)[0],

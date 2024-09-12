@@ -9,6 +9,7 @@ import {
   generarUrlFirmada,
   crearImagen,
   devolverImagen,
+  devolverImagenEquipo,
 } from "./controllers/imagen.controller.js";
 import asyncHandler from "express-async-handler";
 import { validarToken, validarAdmin } from "./utils.js";
@@ -36,3 +37,5 @@ rutas.route("/generar-url").post(asyncHandler(generarUrlFirmada));
 rutas.route("/imagen").post(asyncHandler(crearImagen));
 
 rutas.route("/imagen/:id").get(asyncHandler(devolverImagen));
+
+rutas.route("/imagen/equipo/:id").get(asyncHandler(devolverImagenEquipo));
