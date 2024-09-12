@@ -1,0 +1,19 @@
+db          > muestra la bd en la cual nos encontramos actualmente
+show dbs    > lista las bases de datos del servidor y sus tamaños
+use NOMBRE_BD   > si la bd existe, nos moveremos a ella, caso contrario la creara de manera temporal
+
+db.NOMBRE_TABLA.insertOne({...})    > inserta un nuevo registro en la tabla definida
+db.NOMBRE_TABLA.insertMany([...])   > inserta varios registros en la tabla definida
+db.NOMBRE_TABLA.find()              > Devolvera todos los registros de la tabla | SELECT * FROM NOMBRE_TABLA;
+db.NOMBRE_TABLA.find({CONDICIONALES})
+
+
+SELECT * FROM personas WHERE sexo = 'M' AND soltero = false;
+db.personas.find({sexo:'M', soltero: false} )
+
+
+SELECT * FROM personas WHERE apellido ='Fujimori OR apellidos = 'Garcia Perez';
+db.personas.find({ $or: [{apellido: 'Fujimori',}, {apellidos: 'Garcia Perez'}] })
+
+// Mostrar todas las personas que esten solteras o sean de nacionalidad Japones
+db.personas.find({$or: [{soltero: true }, {nacionalidad:'Japones'}]})
