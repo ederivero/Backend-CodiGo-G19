@@ -1,4 +1,5 @@
 import { LibroModel } from "../models/libro.model.js";
+import { obtenerSocket } from "../socket.js";
 import { crearLibroDto } from "./dtos/libro.dto.js";
 
 export const crearLibro = async (req, res) => {
@@ -9,6 +10,10 @@ export const crearLibro = async (req, res) => {
   }
 
   const nuevoLibro = await LibroModel.create({ ...value });
+  const socket = obtenerSocket();
+
+  // Emitir un evento para que se pueda escucharlo nuestro cliente
+  socket.emit("libro_creado", { content: nuevoLibro.toJSON() });
 
   return res.status(201).json({
     message: "Libro creado exitosamente",
@@ -37,6 +42,10 @@ export const actualizarLibro = async (req, res) => {
     // https://mongoosejs.com/docs/api/model.html#Model.findByIdAndUpdate()
     new: true, // devolver la informacion ya actualizada, sino devolvera la informacion previa a la actualizacion
   });
+
+  const socket = obtenerSocket();
+
+  socket.emit("libro_actualizado", { content: resultado.toJSON() });
 
   return res.json({
     message: "Libro actualizado exitosamente",
