@@ -1,7 +1,7 @@
 import express from "express";
 import { enrutador } from "./router.js";
 import mongoose from "mongoose";
-import { Server } from "socket.io";
+import cors from "cors";
 import { createServer } from "http";
 import { iniciarSocket } from "./socket.js";
 
@@ -9,6 +9,7 @@ const servidor = express();
 // Agregamos toda la funcionabilidad de express en nuestro servidor http
 const servidorHttp = createServer(servidor);
 
+servidor.use(cors({ origin: "*" }));
 servidor.use(express.json());
 
 servidor.use(enrutador);
